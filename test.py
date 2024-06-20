@@ -55,6 +55,7 @@ parser.add_argument('--show_time', default=False, action='store_true', help='sho
 parser.add_argument('--test_folder', default='/data/', type=str, help='folder path to input images')
 parser.add_argument('--refine', default=False, action='store_true', help='enable link refiner')
 parser.add_argument('--refiner_model', default='weights/craft_refiner_CTW1500.pth', type=str, help='pretrained refiner model')
+parser.add_argument('--result_folder', default='./result/', type=str, help='folder path to save result images')
 
 args = parser.parse_args()
 
@@ -62,7 +63,7 @@ args = parser.parse_args()
 """ For test images in a folder """
 image_list, _, _ = file_utils.get_files(args.test_folder)
 
-result_folder = './result/'
+result_folder = args.result_folder
 if not os.path.isdir(result_folder):
     os.mkdir(result_folder)
 
@@ -118,7 +119,6 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly, r
     return boxes, polys, ret_score_text
 
 
-
 if __name__ == '__main__':
     # load net
     net = CRAFT()     # initialize
@@ -162,9 +162,9 @@ if __name__ == '__main__':
         bboxes, polys, score_text = test_net(net, image, args.text_threshold, args.link_threshold, args.low_text, args.cuda, args.poly, refine_net)
 
         # save score text
-        filename, file_ext = os.path.splitext(os.path.basename(image_path))
-        mask_file = result_folder + "/res_" + filename + '_mask.jpg'
-        cv2.imwrite(mask_file, score_text)
+        # filename, file_ext = os.path.splitext(os.path.basename(image_path))
+        # mask_file = result_folder + "/res_" + filename + '_mask.jpg'
+        # cv2.imwrite(mask_file, score_text)
 
         file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
 
